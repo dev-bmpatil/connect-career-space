@@ -1,10 +1,10 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Recruiter } from "@/types";
+import { useNavigate } from "react-router-dom";
 
 // Mock job postings data
 const mockJobPostings = [
@@ -64,6 +64,33 @@ const mockApplicants = [
 
 const RecruiterDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    // Redirect to login if user is not logged in or is not a recruiter
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    
+    if (user.role !== "recruiter") {
+      navigate("/");
+      return;
+    }
+    
+    setIsLoading(false);
+  }, [user, navigate]);
+  
+  // Don't render anything while checking authentication
+  if (isLoading || !user) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Loading dashboard...</p>
+      </div>
+    );
+  }
+  
   const recruiter = user as Recruiter;
   
   const getStatusColor = (status: string) => {
