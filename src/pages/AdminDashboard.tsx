@@ -1,4 +1,6 @@
 
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navbar } from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,6 +34,32 @@ const mockJobStats = {
 
 const AdminDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    // Redirect to login if user is not logged in or is not an admin
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    
+    if (user.role !== "admin") {
+      navigate("/");
+      return;
+    }
+    
+    setIsLoading(false);
+  }, [user, navigate]);
+
+  // Don't render anything while checking authentication
+  if (isLoading || !user) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Loading dashboard...</p>
+      </div>
+    );
+  }
 
   // Status color mapping
   const getUserStatusColor = (status: string) => {

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Recruiter } from "@/types";
 import { useNavigate } from "react-router-dom";
+import { Navbar } from "@/components/Navbar";
 
 // Mock job postings data
 const mockJobPostings = [
@@ -120,161 +122,164 @@ const RecruiterDashboard = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="col-span-full md:col-span-1">
-          <CardHeader>
-            <CardTitle>Welcome, {recruiter.name}!</CardTitle>
-            <CardDescription>Recruiter Dashboard</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <h3 className="font-medium">Account Overview</h3>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <div className="text-gray-500">Company:</div>
-                <div>{recruiter.company || "Not specified"}</div>
-                
-                <div className="text-gray-500">Position:</div>
-                <div>{recruiter.position || "Not specified"}</div>
-                
-                <div className="text-gray-500">Active Jobs:</div>
-                <div>{mockJobPostings.filter(job => job.status === "active").length}</div>
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="font-medium mb-2">Quick Stats</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-brand-light p-3 rounded-lg">
-                  <div className="text-brand-primary text-2xl font-bold">35</div>
-                  <div className="text-sm text-gray-600">Total Applicants</div>
-                </div>
-                <div className="bg-brand-light p-3 rounded-lg">
-                  <div className="text-brand-primary text-2xl font-bold">8</div>
-                  <div className="text-sm text-gray-600">Shortlisted</div>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <Card className="col-span-full md:col-span-1">
+            <CardHeader>
+              <CardTitle>Welcome, {recruiter.name}!</CardTitle>
+              <CardDescription>Recruiter Dashboard</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <h3 className="font-medium">Account Overview</h3>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="text-gray-500">Company:</div>
+                  <div>{recruiter.company || "Not specified"}</div>
+                  
+                  <div className="text-gray-500">Position:</div>
+                  <div>{recruiter.position || "Not specified"}</div>
+                  
+                  <div className="text-gray-500">Active Jobs:</div>
+                  <div>{mockJobPostings.filter(job => job.status === "active").length}</div>
                 </div>
               </div>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button asChild className="w-full">
-              <a href="/post-job">Post New Job</a>
-            </Button>
-          </CardFooter>
-        </Card>
+              
+              <div>
+                <h3 className="font-medium mb-2">Quick Stats</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-brand-light p-3 rounded-lg">
+                    <div className="text-brand-primary text-2xl font-bold">35</div>
+                    <div className="text-sm text-gray-600">Total Applicants</div>
+                  </div>
+                  <div className="bg-brand-light p-3 rounded-lg">
+                    <div className="text-brand-primary text-2xl font-bold">8</div>
+                    <div className="text-sm text-gray-600">Shortlisted</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button asChild className="w-full">
+                <a href="/post-job">Post New Job</a>
+              </Button>
+            </CardFooter>
+          </Card>
 
-        <Card className="col-span-full md:col-span-2">
-          <Tabs defaultValue="jobs">
-            <CardHeader className="pb-1">
-              <div className="flex items-center justify-between">
-                <CardTitle>Job Management</CardTitle>
-                <TabsList>
-                  <TabsTrigger value="jobs">Job Postings</TabsTrigger>
-                  <TabsTrigger value="applicants">Recent Applicants</TabsTrigger>
-                </TabsList>
-              </div>
+          <Card className="col-span-full md:col-span-2">
+            <Tabs defaultValue="jobs">
+              <CardHeader className="pb-1">
+                <div className="flex items-center justify-between">
+                  <CardTitle>Job Management</CardTitle>
+                  <TabsList>
+                    <TabsTrigger value="jobs">Job Postings</TabsTrigger>
+                    <TabsTrigger value="applicants">Recent Applicants</TabsTrigger>
+                  </TabsList>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <TabsContent value="jobs" className="space-y-4">
+                  <div className="rounded-md border">
+                    <div className="grid grid-cols-12 bg-gray-50 p-3 text-xs font-medium text-gray-500">
+                      <div className="col-span-5">Job Title</div>
+                      <div className="col-span-2">Applicants</div>
+                      <div className="col-span-2">Deadline</div>
+                      <div className="col-span-2">Status</div>
+                      <div className="col-span-1"></div>
+                    </div>
+                    {mockJobPostings.map((job) => (
+                      <div key={job.id} className="grid grid-cols-12 border-t p-3 text-sm">
+                        <div className="col-span-5 font-medium">{job.title}</div>
+                        <div className="col-span-2 text-gray-700">{job.applications}</div>
+                        <div className="col-span-2 text-gray-500">{job.deadline}</div>
+                        <div className="col-span-2">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getStatusColor(job.status)}`}>
+                            {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
+                          </span>
+                        </div>
+                        <div className="col-span-1 flex justify-end">
+                          <Button variant="ghost" size="sm">
+                            Edit
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </TabsContent>
+                <TabsContent value="applicants" className="space-y-4">
+                  <div className="rounded-md border">
+                    <div className="grid grid-cols-12 bg-gray-50 p-3 text-xs font-medium text-gray-500">
+                      <div className="col-span-3">Applicant</div>
+                      <div className="col-span-3">Job Title</div>
+                      <div className="col-span-2">University</div>
+                      <div className="col-span-2">Date</div>
+                      <div className="col-span-2">Status</div>
+                    </div>
+                    {mockApplicants.map((app) => (
+                      <div key={app.id} className="grid grid-cols-12 border-t p-3 text-sm">
+                        <div className="col-span-3 font-medium">{app.name}</div>
+                        <div className="col-span-3 text-gray-700">{app.jobTitle}</div>
+                        <div className="col-span-2 text-gray-700">{app.university}</div>
+                        <div className="col-span-2 text-gray-500">{app.appliedAt}</div>
+                        <div className="col-span-2">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getApplicantStatusColor(app.status)}`}>
+                            {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </TabsContent>
+              </CardContent>
+            </Tabs>
+          </Card>
+          
+          <Card className="col-span-full">
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
             </CardHeader>
             <CardContent>
-              <TabsContent value="jobs" className="space-y-4">
-                <div className="rounded-md border">
-                  <div className="grid grid-cols-12 bg-gray-50 p-3 text-xs font-medium text-gray-500">
-                    <div className="col-span-5">Job Title</div>
-                    <div className="col-span-2">Applicants</div>
-                    <div className="col-span-2">Deadline</div>
-                    <div className="col-span-2">Status</div>
-                    <div className="col-span-1"></div>
+              <div className="space-y-4">
+                <div className="flex">
+                  <div className="mr-4 flex-shrink-0 self-center">
+                    <div className="h-2 w-2 rounded-full bg-brand-secondary"></div>
                   </div>
-                  {mockJobPostings.map((job) => (
-                    <div key={job.id} className="grid grid-cols-12 border-t p-3 text-sm">
-                      <div className="col-span-5 font-medium">{job.title}</div>
-                      <div className="col-span-2 text-gray-700">{job.applications}</div>
-                      <div className="col-span-2 text-gray-500">{job.deadline}</div>
-                      <div className="col-span-2">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getStatusColor(job.status)}`}>
-                          {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
-                        </span>
-                      </div>
-                      <div className="col-span-1 flex justify-end">
-                        <Button variant="ghost" size="sm">
-                          Edit
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </TabsContent>
-              <TabsContent value="applicants" className="space-y-4">
-                <div className="rounded-md border">
-                  <div className="grid grid-cols-12 bg-gray-50 p-3 text-xs font-medium text-gray-500">
-                    <div className="col-span-3">Applicant</div>
-                    <div className="col-span-3">Job Title</div>
-                    <div className="col-span-2">University</div>
-                    <div className="col-span-2">Date</div>
-                    <div className="col-span-2">Status</div>
+                  <div>
+                    <p className="text-sm">
+                      <span className="font-medium">John Student</span> applied to <span className="font-medium">Frontend Developer Intern</span>
+                    </p>
+                    <p className="text-xs text-gray-500">2 hours ago</p>
                   </div>
-                  {mockApplicants.map((app) => (
-                    <div key={app.id} className="grid grid-cols-12 border-t p-3 text-sm">
-                      <div className="col-span-3 font-medium">{app.name}</div>
-                      <div className="col-span-3 text-gray-700">{app.jobTitle}</div>
-                      <div className="col-span-2 text-gray-700">{app.university}</div>
-                      <div className="col-span-2 text-gray-500">{app.appliedAt}</div>
-                      <div className="col-span-2">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getApplicantStatusColor(app.status)}`}>
-                          {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
                 </div>
-              </TabsContent>
+                
+                <div className="flex">
+                  <div className="mr-4 flex-shrink-0 self-center">
+                    <div className="h-2 w-2 rounded-full bg-brand-secondary"></div>
+                  </div>
+                  <div>
+                    <p className="text-sm">
+                      You posted a new job: <span className="font-medium">UX Designer</span>
+                    </p>
+                    <p className="text-xs text-gray-500">1 day ago</p>
+                  </div>
+                </div>
+                
+                <div className="flex">
+                  <div className="mr-4 flex-shrink-0 self-center">
+                    <div className="h-2 w-2 rounded-full bg-brand-secondary"></div>
+                  </div>
+                  <div>
+                    <p className="text-sm">
+                      <span className="font-medium">Alice Johnson</span> was shortlisted for <span className="font-medium">UX Designer</span>
+                    </p>
+                    <p className="text-xs text-gray-500">2 days ago</p>
+                  </div>
+                </div>
+              </div>
             </CardContent>
-          </Tabs>
-        </Card>
-        
-        <Card className="col-span-full">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex">
-                <div className="mr-4 flex-shrink-0 self-center">
-                  <div className="h-2 w-2 rounded-full bg-brand-secondary"></div>
-                </div>
-                <div>
-                  <p className="text-sm">
-                    <span className="font-medium">John Student</span> applied to <span className="font-medium">Frontend Developer Intern</span>
-                  </p>
-                  <p className="text-xs text-gray-500">2 hours ago</p>
-                </div>
-              </div>
-              
-              <div className="flex">
-                <div className="mr-4 flex-shrink-0 self-center">
-                  <div className="h-2 w-2 rounded-full bg-brand-secondary"></div>
-                </div>
-                <div>
-                  <p className="text-sm">
-                    You posted a new job: <span className="font-medium">UX Designer</span>
-                  </p>
-                  <p className="text-xs text-gray-500">1 day ago</p>
-                </div>
-              </div>
-              
-              <div className="flex">
-                <div className="mr-4 flex-shrink-0 self-center">
-                  <div className="h-2 w-2 rounded-full bg-brand-secondary"></div>
-                </div>
-                <div>
-                  <p className="text-sm">
-                    <span className="font-medium">Alice Johnson</span> was shortlisted for <span className="font-medium">UX Designer</span>
-                  </p>
-                  <p className="text-xs text-gray-500">2 days ago</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );
