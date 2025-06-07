@@ -6,7 +6,7 @@ import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Student, Recruiter, Admin } from "@/types";
+import { CombinedUser, FrontendStudent, FrontendRecruiter } from "@/types";
 import { User, Edit, Briefcase, GraduationCap, Building } from "lucide-react";
 
 const Profile = () => {
@@ -30,7 +30,7 @@ const Profile = () => {
     );
   }
 
-  const renderStudentProfile = (student: Student) => (
+  const renderStudentProfile = (student: FrontendStudent) => (
     <>
       <div className="grid gap-4 md:grid-cols-2">
         <div>
@@ -72,7 +72,7 @@ const Profile = () => {
     </>
   );
 
-  const renderRecruiterProfile = (recruiter: Recruiter) => (
+  const renderRecruiterProfile = (recruiter: FrontendRecruiter) => (
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2">
         <div className="flex justify-between">
@@ -112,6 +112,8 @@ const Profile = () => {
     }
   };
 
+  const displayName = user.name || `${user.first_name} ${user.last_name}`.trim() || user.email;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -121,10 +123,10 @@ const Profile = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="h-16 w-16 bg-brand-primary rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                  {user.name.charAt(0).toUpperCase()}
+                  {displayName.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <CardTitle className="text-2xl">{user.name}</CardTitle>
+                  <CardTitle className="text-2xl">{displayName}</CardTitle>
                   <CardDescription className="flex items-center space-x-2">
                     {getRoleIcon()}
                     <span className="capitalize">{user.role}</span>
@@ -139,8 +141,8 @@ const Profile = () => {
             </div>
           </CardHeader>
           <CardContent>
-            {user.role === "student" && renderStudentProfile(user as Student)}
-            {user.role === "recruiter" && renderRecruiterProfile(user as Recruiter)}
+            {user.role === "student" && renderStudentProfile(user as FrontendStudent)}
+            {user.role === "recruiter" && renderRecruiterProfile(user as FrontendRecruiter)}
             {user.role === "admin" && renderAdminProfile()}
           </CardContent>
         </Card>
@@ -150,3 +152,4 @@ const Profile = () => {
 };
 
 export default Profile;
+

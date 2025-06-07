@@ -1,10 +1,10 @@
 
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { User } from "@/types";
+import { CombinedUser } from "@/types";
 import { toast } from "sonner";
 
 interface AuthContextType {
-  user: User | null;
+  user: CombinedUser | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string, role: 'student' | 'recruiter') => Promise<void>;
@@ -14,10 +14,13 @@ interface AuthContextType {
 // Mock user data for development
 const mockUsers = [
   {
-    id: "s1",
+    id: 1,
     name: "John Student",
     email: "student@example.com",
+    password: "password",
     role: "student" as const,
+    first_name: "John",
+    last_name: "Student",
     university: "MIT",
     degree: "Computer Science",
     graduationYear: 2024,
@@ -25,26 +28,32 @@ const mockUsers = [
     about: "Passionate student looking for internships in software development."
   },
   {
-    id: "r1",
+    id: 2,
     name: "Jane Recruiter",
     email: "recruiter@example.com",
+    password: "password",
     role: "recruiter" as const,
+    first_name: "Jane",
+    last_name: "Recruiter",
     company: "Tech Solutions Inc.",
     position: "HR Manager",
     about: "Hiring manager for software engineering positions."
   },
   {
-    id: "a1",
+    id: 3,
     name: "Admin User",
     email: "admin@example.com",
-    role: "admin" as const
+    password: "password",
+    role: "admin" as const,
+    first_name: "Admin",
+    last_name: "User"
   }
 ];
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<CombinedUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -66,7 +75,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const foundUser = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
       
       if (foundUser && password === "password") { // Simple mock authentication
-        setUser(foundUser);
+        setUser(foundUser as CombinedUser);
         localStorage.setItem("user", JSON.stringify(foundUser));
         toast.success(`Welcome back, ${foundUser.name}!`);
       } else {
@@ -95,10 +104,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       // Create new user
       const newUser = {
-        id: `${role[0]}${mockUsers.length + 1}`,
+        id: mockUsers.length + 1,
         name,
         email,
+        password,
         role,
+        first_name: name.split(' ')[0] || name,
+        last_name: name.split(' ').slice(1).join(' ') || '',
         ...(role === 'student' ? {
           university: "",
           degree: "",
@@ -113,7 +125,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // In a real app, we would save this to the backend
       mockUsers.push(newUser as any);
       
-      setUser(newUser);
+      setUser(newUser as CombinedUser);
       localStorage.setItem("user", JSON.stringify(newUser));
       toast.success("Registration successful!");
     } catch (error) {
@@ -138,3 +150,4 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
