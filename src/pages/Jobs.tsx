@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Search, Briefcase, MapPin, Calendar, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // Mock job data
 const mockJobs = [
@@ -246,8 +246,12 @@ const Jobs = () => {
                     </div>
                   </div>
                   <div className="mt-4 pt-4 border-t flex justify-end space-x-4">
-                    <Button variant="outline">View Details</Button>
-                    <Button>Apply Now</Button>
+                    <Button variant="outline" asChild>
+                      <Link to={`/jobs/${job.id}`}>View Details</Link>
+                    </Button>
+                    <Button asChild>
+                      <Link to={`/jobs/${job.id}`}>Apply Now</Link>
+                    </Button>
                   </div>
                 </Card>
               ))}

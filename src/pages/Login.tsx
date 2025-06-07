@@ -1,94 +1,110 @@
-
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
-const Login = () => {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    
+
+    if (!email || !password) {
+      toast.error("Please enter your email and password");
+      return;
+    }
+
+    setIsLoading(true);
     try {
       await login(email, password);
       navigate("/");
     } catch (error) {
-      // Error is handled in the login function through toast
-      console.error(error);
+      console.error("Login failed:", error);
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Login to ZIDIOConnect</CardTitle>
-          <CardDescription>
-            Enter your credentials to access your account
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input 
-                id="email"
-                type="email" 
-                placeholder="name@example.com" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        <Card>
+          <CardHeader className="text-center">
+            <div className="text-3xl font-bold text-brand-primary mb-2">
+              ZIDIO<span className="text-brand-secondary">Connect</span>
             </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link to="/forgot-password" className="text-sm text-brand-secondary hover:underline">
-                  Forgot password?
-                </Link>
+            <CardTitle className="text-2xl">Welcome back</CardTitle>
+            <CardDescription>Sign in to your account</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
               </div>
-              <Input 
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Use "password" for all demo accounts.
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Signing in..." : "Sign in"}
+              </Button>
+            </form>
+            
+            <div className="mt-4 text-center">
+              <Link to="/forgot-password" className="text-sm text-brand-primary hover:text-brand-secondary">
+                Forgot your password?
+              </Link>
+            </div>
+            
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-500">
+                Don't have an account?{" "}
+                <Link to="/register" className="text-brand-primary hover:text-brand-secondary">
+                  Sign up
+                </Link>
               </p>
-              <p className="text-xs text-gray-500">
-                Demo accounts: student@example.com, recruiter@example.com, admin@example.com
+            </div>
+
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-500">
+                Demo Credentials:
+              </p>
+              <p className="text-sm text-gray-500">
+                student@example.com / password
+              </p>
+              <p className="text-sm text-gray-500">
+                recruiter@example.com / password
+              </p>
+              <p className="text-sm text-gray-500">
+                admin@example.com / password
               </p>
             </div>
           </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Signing in..." : "Sign in"}
-            </Button>
-            <div className="text-sm text-center">
-              Don't have an account?{" "}
-              <Link to="/register" className="text-brand-secondary hover:underline">
-                Register
-              </Link>
-            </div>
-          </CardFooter>
-        </form>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
-};
-
-export default Login;
+}

@@ -1,9 +1,9 @@
 
 import { useAuth } from "@/contexts/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Menu, User, LogOut } from "lucide-react";
+import { Menu, User, LogOut, Settings, Briefcase, Users, Plus } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,10 +16,29 @@ import { useState } from "react";
 
 export const Navbar = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setMobileMenuOpen(false);
+  };
+
+  const getDashboardPath = () => {
+    switch (user?.role) {
+      case "student":
+        return "/student-dashboard";
+      case "recruiter":
+        return "/recruiter-dashboard";
+      case "admin":
+        return "/admin-dashboard";
+      default:
+        return "/";
+    }
   };
 
   return (
@@ -40,14 +59,14 @@ export const Navbar = () => {
               <Link to="/jobs" className="border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300 px-3 py-2 text-sm font-medium">
                 Jobs
               </Link>
+              {user && (
+                <Link to={getDashboardPath()} className="border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300 px-3 py-2 text-sm font-medium">
+                  Dashboard
+                </Link>
+              )}
               {user?.role === "recruiter" && (
                 <Link to="/post-job" className="border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300 px-3 py-2 text-sm font-medium">
                   Post a Job
-                </Link>
-              )}
-              {user?.role === "admin" && (
-                <Link to="/admin" className="border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300 px-3 py-2 text-sm font-medium">
-                  Admin Panel
                 </Link>
               )}
             </div>
@@ -77,17 +96,30 @@ export const Navbar = () => {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/profile" className="cursor-pointer flex w-full items-center">
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
-                    </Link>
+                  <DropdownMenuItem onClick={() => handleNavigation(getDashboardPath())}>
+                    <Briefcase className="mr-2 h-4 w-4" />
+                    <span>Dashboard</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <button onClick={logout} className="cursor-pointer flex w-full items-center">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Log out</span>
-                    </button>
+                  <DropdownMenuItem onClick={() => handleNavigation("/profile")}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  {user.role === "recruiter" && (
+                    <DropdownMenuItem onClick={() => handleNavigation("/post-job")}>
+                      <Plus className="mr-2 h-4 w-4" />
+                      <span>Post Job</span>
+                    </DropdownMenuItem>
+                  )}
+                  {user.role === "admin" && (
+                    <DropdownMenuItem onClick={() => handleNavigation("/admin-dashboard")}>
+                      <Users className="mr-2 h-4 w-4" />
+                      <span>Admin Panel</span>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -120,14 +152,14 @@ export const Navbar = () => {
             <Link to="/jobs" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50" onClick={toggleMobileMenu}>
               Jobs
             </Link>
+            {user && (
+              <Link to={getDashboardPath()} className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50" onClick={toggleMobileMenu}>
+                Dashboard
+              </Link>
+            )}
             {user?.role === "recruiter" && (
               <Link to="/post-job" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50" onClick={toggleMobileMenu}>
                 Post a Job
-              </Link>
-            )}
-            {user?.role === "admin" && (
-              <Link to="/admin" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50" onClick={toggleMobileMenu}>
-                Admin Panel
               </Link>
             )}
           </div>
@@ -147,9 +179,9 @@ export const Navbar = () => {
                 </div>
               </div>
               <div className="mt-3 space-y-1">
-                <Link to="/profile" className="block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50" onClick={toggleMobileMenu}>
+                <button onClick={() => handleNavigation("/profile")} className="w-full text-left block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
                   Your Profile
-                </Link>
+                </button>
                 <button onClick={() => { logout(); toggleMobileMenu(); }} className="w-full text-left block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
                   Log out
                 </button>
